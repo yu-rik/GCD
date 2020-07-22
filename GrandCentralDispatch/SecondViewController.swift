@@ -37,12 +37,25 @@ class SecondViewController: UIViewController {
     
     //метод для загрузки изображения
     fileprivate func fetchImage () {
-        imageURL = URL(string: "https://thumbs.dreamstime.com/z/bright-balls-14145086.jpg")
+        imageURL = URL(string: "https://i.pinimg.com/originals/ff/c8/80/ffc880cba3e810d0a216f493531fdcf8.png")
        //перед загрузкой запускаем activityIndicator
         activityIndicator.isHidden = false
         activityIndicator.startAnimating()
-        guard let url = imageURL, let imageData = try? Data (contentsOf: url) else {return}
-        self.image = UIImage(data: imageData)
+        
+        //создаем отдельный поток для  процесса загрузки
+        //создаем очередь
+        let queeu = DispatchQueue.global(qos: .utility)
+        // добавляем процесс в очередь
+        queeu.async {
+            guard let url = self.imageURL, let imageData = try? Data (contentsOf: url) else {return}
+            //возвращаеемся в основной поток
+            DispatchQueue.main.async {
+                
+                self.image = UIImage(data: imageData)
+            }
+            
+        }
+        
      
         /* if let url = imageURL {
             let imageData = try? Data(contentsOf: url)
